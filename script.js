@@ -87,12 +87,16 @@ minus.addEventListener('click', (event) => {
 });
 
 clear.addEventListener('click', (event) => {
+    clearAll()
+
+});
+
+function clearAll() {
     screen.textContent = '';
     firstNumber = '';
     secondNumber = '';
     dzialanie = '';
-});
-
+};
 
 multiply.addEventListener('click', (event) => {
     zbierzDane('*');
@@ -105,35 +109,66 @@ zero.addEventListener('click', (event) => {
 });
 
 function zbierzDane(input) {
-    screen.textContent += input;
+
+
     if (typeof(input) == 'number' && dzialanie == '') {
+        document.querySelectorAll('.btnsign').forEach((operatorButton) => {
+            operatorButton.style.pointerEvents = 'auto';
+        });
         firstNumber = firstNumber + input;
     } else if (typeof(input) == 'number' && dzialanie !== '') {
-        secondNumber = secondNumber + input;
+        document.querySelectorAll('.btnsign').forEach((operatorButton) => {
+            operatorButton.style.pointerEvents = 'auto';
+        });
+        if (dzialanie == '=') {
+            clearAll();
+            firstNumber = firstNumber + input;
+        } else {
+            secondNumber = secondNumber + input;
+        }
+
     } else if (typeof(input) == 'string') {
+        document.querySelectorAll('.btnsign').forEach((operatorButton) => {
+            operatorButton.style.pointerEvents = 'none';
+        });
 
         if (input == '=') {
-            switch (dzialanie) {
-                case '*':
-                    wynik = firstNumber * secondNumber;
-                    break;
-                case '-':
-                    wynik = firstNumber - secondNumber;
-                    break;
-                case '/':
-                    wynik = firstNumber / secondNumber;
-                    break;
-                case '+':
-                    wynik = +firstNumber + +secondNumber;
-                    break;
-                default:
-                    screen.textContent = 'Error';
-            }
+            calculate();
             screen.textContent = wynik;
-        } else { dzialanie = input }
+            firstNumber = wynik;
+            secondNumber = '';
+            dzialanie = input;
+        } else {
+            if (dzialanie !== '' && dzialanie !== '=') {
+                calculate();
+                firstNumber = wynik;
+                secondNumber = '';
+                dzialanie = input;
+            } else {
+                dzialanie = input
+            }
+        }
     }
+    if (input !== '=') {
+        screen.textContent += input;
+    }
+}
 
-    console.log('pierwsza: ' + firstNumber);
-    console.log('druga: ' + secondNumber);
-    console.log('dzialanie: ' + dzialanie);
+function calculate() {
+    switch (dzialanie) {
+        case '*':
+            wynik = firstNumber * secondNumber;
+            break;
+        case '-':
+            wynik = firstNumber - secondNumber;
+            break;
+        case '/':
+            wynik = firstNumber / secondNumber;
+            break;
+        case '+':
+            wynik = +firstNumber + +secondNumber;
+            break;
+        default:
+            screen.textContent = 'Error';
+    }
 }
